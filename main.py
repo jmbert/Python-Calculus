@@ -28,13 +28,19 @@ def multiply(a) :
 s = turtle.Screen()
 
 # Define our grid function
-def DrawGrid(screen) :
+def DrawGrid(screen, xOffset, yOffset) :
+    turtle.tracer(0, 0)
+    turtle.speed(0)
+    turtle.ht()
     width, height = screen.window_width(), screen.window_height()
+    turtle.penup()
+    turtle.goto(-width, yOffset)
     turtle.pendown()
-    turtle.goto(-width, 0)
-    turtle.goto(width, 0)
-    turtle.goto(0, height)
-    turtle.goto(0, -height)
+    turtle.goto(width, yOffset)
+    turtle.penup()
+    turtle.goto(xOffset, height)
+    turtle.pendown()
+    turtle.goto(xOffset, -height)
 
 # Operation class
 class operation :
@@ -136,7 +142,7 @@ class function :
         # Setting i to 0
         i = 0
         # move to the first point (pen still up)
-        pen.goto(x * zoom, graph[0] * zoom)
+        pen.goto((x * zoom) + xOffset, (graph[0] * zoom) + yOffset)
         # Put pen down
         pen.pendown()
         # Loop over all fields in the graph
@@ -180,11 +186,10 @@ dPen.color("red")
 dPen.speed(0)
 dPen.ht()
 
-# Drawing our grid
-DrawGrid(s)
+
 
 # Instantiating function with an operation, the graph Limit, the pen, and detail
-func = function(operation(math.sin), graphLim, pen, dx, dPen)
+func = function(operation(power, 2), graphLim, pen, dx, dPen)
 
 # Calculate, then display Graph
 func.DisplayGraph(func.Graph(), zoom, func.pen, 0, 0)
@@ -195,19 +200,20 @@ func.DisplayGraph(func.Differentiate(dx), zoom, func.dPen, 0, 0)
 x = 0
 y = 0
 
+
 # Loop for input
 while (True) :
-    # Modify x from user input
-    xA = s.numinput("X", "", 0, minval=0, maxval=math.inf)
-    yA = s.numinput("Y", "", 0, minval=0, maxval=math.inf)
-    x = x + xA
-    y = y + yA
+    x = s.numinput("X", "", x, minval=-math.inf, maxval=math.inf)
+    y = s.numinput("Y", "", y, minval=-math.inf, maxval=math.inf)
 
     # Modify Zoom
-    zoom = s.numinput("Zoom", "", 1, minval=1, maxval=math.inf)
+    zoom = s.numinput("Zoom", "", zoom, minval=1, maxval=math.inf)
 
     # Clear previous screen
     s.clearscreen()
+
+    # Drawing our grid
+    DrawGrid(s, x, y)
 
     # Calculate, then display Graph
     func.DisplayGraph(func.Graph(), zoom, func.pen, x, y)
